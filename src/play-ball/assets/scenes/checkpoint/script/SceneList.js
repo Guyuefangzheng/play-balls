@@ -17,6 +17,11 @@ cc.Class({
             type: cc.Prefab
         },
 
+        ScrollView:{
+            default:null,
+            type: cc.ScrollView
+        },
+
         //初始化一个页面展示按钮的数量
         InitItemCount: 0,
     
@@ -83,8 +88,7 @@ cc.Class({
         //得到所有文件夹的名字
         let dirs = Object.keys(dict);
 
-        dirs.sort();
-
+       
         /**
          * name : xx 
          * url  : xx
@@ -96,7 +100,7 @@ cc.Class({
             let name = Object.keys(dict[dirs[i]])[0];
             let url = dict[dirs[i]][name];
 
-            console.log(name);
+            //console.log(name);
             //如果不是game就跳过
             if(!name.startsWith('game')){
                 continue;
@@ -107,8 +111,15 @@ cc.Class({
             
         }
 
+        this.SceneList.sort(this.sortByField);
+        //console.log(this.SceneList);
       
     },
+
+    sortByField(x, y) {
+        return x.name.slice(-2) < y.name.slice(-2);
+    },
+
 
     //生成按钮
     initItem(){
@@ -136,10 +147,14 @@ cc.Class({
         
             //生成一个新的item
             let item = cc.instantiate(this.ItemPrefab).getComponent('Select_Point_Item');
-            this.node.addChild(item.node);
+            //this.node.addChild(item.node);
+            //item.parent = this.ScrollView;
+            //ScrollView = this.ScrollView;
+            this.ScrollView.content.addChild(item.node);
+            //item.parent = ScrollView.content;
 
             //名字为game_01 最后的两个 即01
-            item.UpdateItem (x, y, ItemInfo.name.slice(-2), ItemInfo.url);
+            item.UpdateItem (x, y, ItemInfo.name, ItemInfo.url);
 
             //一行只存放三个按钮
             if((i + 1) % 3 == 0){
